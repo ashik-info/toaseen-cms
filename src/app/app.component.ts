@@ -7,65 +7,6 @@ interface ICapModel extends ICap {
   quantity: number;
   isSelectedItem: boolean;
 }
-// const data: Array<ICapModel> = [
-//   {
-//     name: 'Canvas Black',
-//     img: '../../assets/images/canvas_black.jpeg',
-//     description: 'Elegant and versatile with a timeless look.',
-//     quantity: 1,
-//     isSelectedItem: false,
-//   },
-//   {
-//     name: 'Canvas Blue',
-//     img: '../../assets/images/canvas_blue.jpeg',
-//     description: 'Fresh and vibrant, perfect for casual wear.',
-//     quantity: 1,
-//     isSelectedItem: false,
-//   },
-//   {
-//     name: 'Canvas Khaki',
-//     img: '../../assets/images/canvas_khaki.jpeg',
-//     description:
-//       'Subtle and stylish, ideal for both formal and casual occasions.',
-//     quantity: 1,
-//     isSelectedItem: false,
-//   },
-//   {
-//     name: 'Canvas Olive',
-//     img: '../../assets/images/canvas_olive.jpeg',
-//     description: 'Rich color that adds a modern twist to your outfit.',
-//     quantity: 1,
-//     isSelectedItem: false,
-//   },
-//   {
-//     name: 'Denim Black',
-//     img: '../../assets/images/denim_black.jpeg',
-//     description: 'Bold and edgy, with a unique denim texture.',
-//     quantity: 1,
-//     isSelectedItem: false,
-//   },
-//   {
-//     name: 'Denim Sky Blue',
-//     img: '../../assets/images/denim_skyblue.jpeg',
-//     description: 'Light and breezy, great for summer outings.',
-//     quantity: 1,
-//     isSelectedItem: false,
-//   },
-//   {
-//     name: 'Denim Blue',
-//     img: '../../assets/images/denim_blue.jpeg',
-//     description: 'Classic blue with a contemporary style.',
-//     quantity: 1,
-//     isSelectedItem: false,
-//   },
-//   {
-//     name: 'Denim Deep Blue',
-//     img: '../../assets/images/denim_deepblue.jpeg',
-//     description: 'Rich deep tone perfect for making a statement.',
-//     quantity: 1,
-//     isSelectedItem: false,
-//   },
-// ];
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -184,8 +125,9 @@ export class AppComponent implements OnInit {
     quantity: 0,
     sale_price: 0,
     cap_id: '',
+    product_name: ''
   };
-  placeOrder() {
+  async placeOrder() {
     if (!this.name || !this.mobile || !this.address) {
       alert('Please fill in all customer details.');
       return;
@@ -203,6 +145,7 @@ export class AppComponent implements OnInit {
       if (cap.isSelectedItem) {
         let qty = cap.quantity;
         cartItems.push({
+          product_name: cap.title,
           cap_id: cap.id,
           quantity: qty,
           sale_price: cap.discount_price,
@@ -215,7 +158,7 @@ export class AppComponent implements OnInit {
     this.order.shipping_charge = this.deliveryCharge;
     this.order.grand_total = this.totalOrder;
     console.log(this.order, cartItems, consumer);
-    
+
     if (selectedCaps === 0) {
       alert('Please select at least one cap to place an order.');
       return;
