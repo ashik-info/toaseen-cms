@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "toaseen-cms:build:production"
+              "buildTarget": "toaseen-cms:build:production"
             },
             "development": {
-              "browserTarget": "toaseen-cms:build:development"
+              "buildTarget": "toaseen-cms:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +82,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "toaseen-cms:build"
+            "buildTarget": "toaseen-cms:build"
           }
         },
         "test": {
