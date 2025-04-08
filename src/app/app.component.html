@@ -81,7 +81,7 @@
       </p>
       <div class="quantity">
         <button (click)="updateQuantity(index, -1)">-</button>
-        <input type="number" id="qty-${index}" [value]="cap.quantity" min="1" />
+        <input type="number" id="qty-${index}" [value]="cap.isSelectedItem ? cap.quantity : 1" min="1" />
         <button (click)="updateQuantity(index, 1)">+</button>
       </div>
     </div>

@@ -77,26 +77,17 @@ export class AppComponent implements OnInit {
     this.calculateOrder();
     console.log('Selected City:', this.city);
   }
+  getTotalCaps() {
+    return this.caps
+      .filter((i) => i.isSelectedItem)
+      .map((c) => c.quantity)
+      .reduce((a, b) => a + b, 0);
+  }
   calculateOrder() {
-    let totalCaps = 1;
-
-    this.caps.forEach((cap, index) => {
-      if (cap.isSelectedItem) {
-        let qty = cap.quantity;
-        totalCaps += qty;
-        this.capsTotal += qty * this.discountPrice;
-      }
-    });
-
-    if (totalCaps === 0) {
-      // document.getElementById('orderSummary').innerHTML =
-      //   '<p>Please select at least one cap.</p>';
-      return;
-    }
-
-    if (totalCaps >= 5) {
+    this.capsTotal = this.getTotalCaps() * this.discountPrice;
+    if (this.getTotalCaps() >= 5) {
       this.deliveryCharge = 0;
-    } else if (totalCaps >= 3) {
+    } else if (this.getTotalCaps() >= 3 && this.getTotalCaps() < 5) {
       this.deliveryCharge = 40;
     } else {
       if (this.city === 'Dhaka') {
@@ -125,7 +116,7 @@ export class AppComponent implements OnInit {
     quantity: 0,
     sale_price: 0,
     cap_id: '',
-    product_name: ''
+    product_name: '',
   };
   async placeOrder() {
     if (!this.name || !this.mobile || !this.address) {
