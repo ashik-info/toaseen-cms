@@ -3,6 +3,7 @@ import { CapService, ICap } from './services/cap.service';
 import { environment } from 'src/environments/environment';
 import { ICapItem, IPlacedOrder, OrderService } from './services/order.service';
 import { IAccount } from './services/account.service';
+import { FacebookPixelService } from './services/facebook-pixel.service';
 interface ICapModel extends ICap {
   quantity: number;
   isSelectedItem: boolean;
@@ -27,9 +28,11 @@ export class AppComponent implements OnInit {
   galleryImages: Array<string> = [];
   constructor(
     private readonly capService: CapService,
-    private readonly orderService: OrderService
+    private readonly orderService: OrderService,
+    private fbPixel: FacebookPixelService
   ) {}
   ngOnInit(): void {
+    this.fbPixel.init();
     this.capService.getCaps().then(
       (res) =>
         (this.caps = res.items.map((item) => {
@@ -52,6 +55,9 @@ export class AppComponent implements OnInit {
             )
           )[0])
       );
+  }
+  trackButtonClick() {
+    this.fbPixel.trackEvent('ButtonClick', { buttonId: 'cta-button' });
   }
   updateQuantity(index: number, change: number) {
     const qty = this.caps[index].quantity + change;
@@ -119,6 +125,7 @@ export class AppComponent implements OnInit {
     product_name: '',
   };
   async placeOrder() {
+    this.trackButtonClick()
     if (!this.name || !this.mobile || !this.address) {
       alert('Please fill in all customer details.');
       return;
