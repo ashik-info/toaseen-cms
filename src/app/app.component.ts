@@ -1,9 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  Renderer2,
+} from '@angular/core';
 import { CapService, ICap } from './services/cap.service';
 import { environment } from 'src/environments/environment';
 import { ICapItem, IPlacedOrder, OrderService } from './services/order.service';
 import { IAccount } from './services/account.service';
 import { FacebookPixelService } from './services/facebook-pixel.service';
+import { isPlatformBrowser } from '@angular/common';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 interface ICapModel extends ICap {
   quantity: number;
   isSelectedItem: boolean;
@@ -13,7 +23,7 @@ interface ICapModel extends ICap {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterContentInit {
   public caps: Array<ICapModel> = [];
   public fileUrl: string = environment.FILE_URL;
   public regularPrice = 300;
@@ -29,10 +39,37 @@ export class AppComponent implements OnInit {
   constructor(
     private readonly capService: CapService,
     private readonly orderService: OrderService,
-    private fbPixel: FacebookPixelService
-  ) {}
+    private fbPixel: FacebookPixelService,
+    private router: Router
+  ) // private renderer: Renderer2,
+  // @Inject(PLATFORM_ID) private platformId: object
+  {}
+  ngAfterContentInit(): void {
+    // this.fbPixel.init();
+  }
   ngOnInit(): void {
-    this.fbPixel.init();
+    this.fbPixel.init(this.fbPixel.pixelId);
+    this.fbPixel.injectNoScript(this.fbPixel.pixelId);
+
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => this.fbPixel.track('PageView'));
+
+    // if (isPlatformBrowser(this.platformId)) {
+    //   // this.pixel.init('252558660');
+
+    //   const noscript = this.renderer.createElement('noscript');
+    //   noscript.innerHTML = `
+    //     <img height="1" width="1" style="display:none"
+    //       src="https://www.facebook.com/tr?id=${this.fbPixel.pixelId}&ev=PageView&noscript=1" />
+    //   `;
+    //   this.renderer.appendChild(document.body, noscript);
+    // }
+    // const noscript = this.renderer.createElement('noscript');
+    // noscript.innerHTML = `
+    //   <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${this.fbPixel.pixelId}&ev=PageView&noscript=1" />
+    // `;
+    // this.renderer.appendChild(document.body, noscript);
     this.capService.getCaps().then(
       (res) =>
         (this.caps = res.items.map((item) => {
@@ -57,7 +94,7 @@ export class AppComponent implements OnInit {
       );
   }
   trackButtonClick() {
-    this.fbPixel.trackEvent('ButtonClick', { buttonId: 'cta-button' });
+    // this.fbPixel.trackEvent('ButtonClick', { buttonId: 'cta-button' });
   }
   updateQuantity(index: number, change: number) {
     const qty = this.caps[index].quantity + change;
@@ -125,7 +162,7 @@ export class AppComponent implements OnInit {
     product_name: '',
   };
   async placeOrder() {
-    this.trackButtonClick()
+    this.trackButtonClick();
     if (!this.name || !this.mobile || !this.address) {
       alert('Please fill in all customer details.');
       return;
