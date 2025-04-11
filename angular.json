@@ -33,7 +33,9 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": [],
+            "scripts": [
+              "src/fb_pixel.js"
+            ],
             "browser": "src/main.ts",
             "server": "src/main.server.ts",
             "prerender": true,
