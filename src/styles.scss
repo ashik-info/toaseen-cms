@@ -292,6 +292,9 @@ footer {
   margin-top: 30px;
 }
 @media screen and (max-width: 480px) {
+  .page-container {
+    width: 100%;
+  }
   header {
     background: url("./assets/images/cap-banner-mobile.jpg") no-repeat center
       center/cover;
