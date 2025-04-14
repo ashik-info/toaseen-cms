@@ -1,0 +1,228 @@
+<div class="page-container">
+  <div
+    style="
+      background-color: #fff;
+      box-shadow: 0px 0px 14px -4px rgba(0, 0, 0, 0.2705882353);
+      -webkit-box-shadow: 0px 0px 14px -4px rgba(0, 0, 0, 0.2705882353);
+      margin: auto;
+    "
+  >
+    <div class="header-table" style="width: 100%">
+      <div
+        class="header"
+        style="
+          background-color: #f7f7f7;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+        "
+      >
+        <div class="header-logo" style="padding: 10px 32px">
+          <img
+            src="assets/images/app_logo.png"
+            class="main-logo"
+            alt="logo"
+            height="100"
+            style="transform: scale(1.8)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 27px; width: 100%">
+      <img
+        src="assets/images/order-success-poster.png"
+        alt=""
+        style="width: 100%; height: 100%"
+      />
+    </div>
+
+    <div style="padding: 0 27px; width: 100%">
+      <div class="title title-2 text-center">
+        <h2 style="font-size: 20px; font-weight: 700; margin: 24px 0 0">
+          Thanks For your Order
+        </h2>
+        <p
+          style="
+            font-size: 14px;
+            margin: 5px auto 0;
+            line-height: 1.5;
+            color: #939393;
+            font-weight: 500;
+            width: 70%;
+          "
+        >
+          You'll receive an email when your items are shipped. if you have any
+          questions, Call Us 1-978-8767.
+        </p>
+      </div>
+    </div>
+
+    <div
+      class="dilivery-table"
+      style="
+        padding: 2rem;
+        background-color: #f7f7f7;
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        width: fit-content;
+      "
+    >
+      <div
+        style="
+          text-align: left;
+          padding-right: 28px;
+          border-right: 2px solid rgba(217, 217, 217, 0.5);
+        "
+      >
+        <div class="title title-2" style="text-align: left">
+          <h2 style="font-size: 16px; font-weight: 700; margin: 0 0 12px">
+            Thanks For your Order
+          </h2>
+          <p
+            style="
+              font-size: 14px;
+              margin: 0;
+              line-height: 1.5;
+              color: #939393;
+              font-weight: 500;
+            "
+          >
+            268 Cambridge Lane New Albany, IN 47150268 Cambridge Lane New
+            Albany, IN 47150
+          </p>
+        </div>
+      </div>
+
+      <div style="text-align: left; padding-left: 32px">
+        <div class="title title-2" style="text-align: left">
+          <h2 style="font-size: 16px; font-weight: 700; margin: 0 0 12px">
+            Thanks For your Order
+          </h2>
+          <p
+            style="
+              font-size: 14px;
+              margin: 0;
+              line-height: 1.5;
+              color: #939393;
+              font-weight: 500;
+            "
+          >
+            You'll receive an email when your items are shipped. if you have any
+            questions, Call Us 1-978-8767.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="shipping-table" style="padding: 2rem; width: 100%">
+      <div
+        style="
+          font-size: 17px;
+          font-weight: 700;
+          padding-bottom: 8px;
+          border-bottom: 1px solid rgba(217, 217, 217, 0.5);
+          text-align: left;
+        "
+      >
+        Shipped Items
+      </div>
+
+      <div
+        style="
+          display: flex;
+          align-items: center;
+          gap: 22px;
+          border-left: 1px dashed rgba(82, 82, 108, 0.7);
+          padding-top: 1rem;
+        "
+      >
+        <div style="width: 100%" *ngIf="orderDetails?.cart_items">
+          <div
+            class="product-table"
+            *ngFor="let cap of orderDetails.cart_items"
+          >
+            <div style="padding-top: 28px">
+              <img width="100px" [src]="cap?.image_url" alt="" />
+            </div>
+            <div style="padding-top: 28px">
+              <ul class="product-detail">
+                <li>{{ cap.product_name }}</li>
+                <li>
+                  QTY: <span>{{ cap.quantity }}</span>
+                </li>
+                <li>
+                  Price: <span>৳{{ cap.sale_price }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="dilivery-table"
+      style="background-color: #f7f7f7; display: grid; padding: 1rem"
+    >
+      <div
+        style="
+          font-weight: 700;
+          font-size: 17px;
+          padding-bottom: 15px;
+          border-bottom: 1px solid rgba(217, 217, 217, 0.5);
+        "
+      >
+        Order summary
+      </div>
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          font-size: 15px;
+          font-weight: 400;
+          padding: 15px 0;
+          border-bottom: 1px solid rgba(217, 217, 217, 0.5);
+        "
+      >
+        <span>Subtotal</span><span>৳{{ this.orderData?.grand_total }}</span>
+      </div>
+      <!-- <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          font-size: 15px;
+          font-weight: 400;
+          padding: 15px 0;
+          border-bottom: 1px solid rgba(217, 217, 217, 0.5);
+        "
+      >
+        <span>Discount</span><span>-$20,00</span>
+      </div> -->
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          font-size: 15px;
+          font-weight: 400;
+          padding: 15px 0;
+          border-bottom: 1px solid rgba(217, 217, 217, 0.5);
+        "
+      >
+        <span>Shipping</span><span>৳{{ this.orderData?.shipping_charge }}</span>
+      </div>
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          font-size: 15px;
+          font-weight: 600;
+          padding-top: 15px;
+        "
+      >
+        <span>Total</span><span>৳{{ this.orderData?.total }}</span>
+      </div>
+    </div>
+  </div>
+</div>
