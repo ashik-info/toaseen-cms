@@ -82,7 +82,7 @@ export class HomePageComponent implements OnInit, AfterContentInit {
           return {
             ...item,
             image: `${this.fileUrl}${item.collectionId}/${item.id}/${item.image}`,
-            quantity: 1,
+            quantity: 0,
             isSelectedItem: false,
           };
         }))
