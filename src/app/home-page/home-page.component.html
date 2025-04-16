@@ -63,13 +63,20 @@
   </div>
   <div class="caps-grid" id="caps">
     <div *ngFor="let cap of caps; let index = index" class="cap">
-      <div (click)="cap.isSelectedItem = true; calculateOrder()">
+      <!-- [checked]="cap.isSelectedItem" -->
+      <div (click)="!cap.isSelectedItem ? updateQuantity(index, 1) : true">
         <input
-          [checked]="cap.isSelectedItem"
-          (change)="cap.isSelectedItem = !cap.isSelectedItem; calculateOrder()"
+          [(ngModel)]="cap.isSelectedItem"
+          [value]="cap.isSelectedItem"
+          (change)="
+            calculateOrder();
+            cap.isSelectedItem === false
+              ? (cap.quantity = 0)
+              : (cap.isSelectedItem = true)
+          "
           type="checkbox"
           class="select-checkbox"
-          id="select-{{ index }}"
+          id="{{ index }}"
         />
         <img src="{{ cap?.image }}" [alt]="cap.title" />
         <h3>{{ cap?.title }}</h3>
@@ -83,7 +90,7 @@
         <input
           type="number"
           id="qty-{{ index }}"
-          [value]="cap.isSelectedItem ? cap.quantity : 0"
+          [value]="cap.isSelectedItem && cap.quantity > 0 ? cap.quantity : 0"
           min="0"
         />
         <button (click)="updateQuantity(index, 1)">+</button>

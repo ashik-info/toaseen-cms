@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { OrderService } from '../services/order.service';
 import { CommonModule } from '@angular/common';
 import { environment } from 'src/environments/environment';
@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-order-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   providers: [OrderService],
   templateUrl: './order-details.component.html',
   styleUrl: './order-details.component.scss',

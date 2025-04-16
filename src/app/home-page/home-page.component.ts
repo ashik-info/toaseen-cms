@@ -103,8 +103,8 @@ export class HomePageComponent implements OnInit, AfterContentInit {
   }
   updateQuantity(index: number, change: number) {
     const qty = this.caps[index].quantity + change;
-    this.caps[index].quantity = qty ? qty : 1;
-    this.caps[index].isSelectedItem = Boolean(qty);
+    this.caps[index].quantity = qty && qty > 0 ? qty : 0;
+    this.caps[index].isSelectedItem = Boolean(qty && qty > 0);
     this.calculateOrder();
     // console.log(
     //   this.caps.map((i) => ({ qty: i.quantity, select: i.isSelectedItem }))
