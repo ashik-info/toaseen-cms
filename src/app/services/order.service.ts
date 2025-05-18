@@ -78,6 +78,7 @@ export class OrderService {
 
   private async createOrder(
     consumerId: string,
+    consumer: IAccount,
     order: IPlacedOrder
   ): Promise<RecordModel | undefined> {
     if (!this.cartItems.length) return undefined;
@@ -86,7 +87,12 @@ export class OrderService {
       ...order,
       consumer_id: consumerId,
       order_items: this.cartItems.map((item) => item.id),
-      data: { data: { consumer_id: consumerId, cart_items: this.cartItems } },
+      data: {
+        data: {
+          consumer: { consumer_id: consumerId, ...consumer },
+          cart_items: this.cartItems,
+        },
+      },
     };
 
     return await this.pb.collection('cap_orders').create(orderData);
@@ -105,7 +111,11 @@ export class OrderService {
       }
 
       await this.createOrderItems(capItems);
-      const orderRecord = await this.createOrder(consumerRecord.id, order);
+      const orderRecord = await this.createOrder(
+        consumerRecord.id,
+        consumer,
+        order
+      );
 
       if (orderRecord) {
         this.currentOrder = orderRecord;
