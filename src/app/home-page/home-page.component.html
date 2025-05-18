@@ -171,3 +171,11 @@
     &copy; 2025 <a href="https://toaseen.com">Toaseen</a>. All rights reserved.
   </p>
 </footer>
+
+<app-place-order-dialog
+  *ngIf="isDialogVisible"
+  [header]="dialogHeader"
+  [message]="dialogMessage"
+  [type]="dialogType"
+  (close)="isDialogVisible = false"
+></app-place-order-dialog>

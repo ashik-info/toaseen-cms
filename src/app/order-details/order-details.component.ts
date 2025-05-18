@@ -14,7 +14,7 @@ import { environment } from 'src/environments/environment';
 })
 export class OrderDetailsComponent implements OnInit {
   orderDetails = {} as any;
-  orderData = {}as any
+  orderData = {} as any;
   constructor(
     private activatedRoute: ActivatedRoute,
     private readonly orderService: OrderService
@@ -26,14 +26,16 @@ export class OrderDetailsComponent implements OnInit {
       if (Boolean(params.get('contact-number'))) {
         const contactNumber = params.get('contact-number');
         this.orderService.getOrderDetails(contactNumber).then((res) => {
-          this.orderDetails = res['data']?.data;
-          this.orderData = res;
+          if (res !== null) {
+            this.orderDetails = res['data']?.data;
+            this.orderData = res;
+          }
           // console.debug(this.orderDetails['data']?.data)
         });
       }
     });
   }
-  getImageUrl(capID:string, imgPath:string) {
-    return  `${environment.FILE_URL}${environment.CAP_COLLECTION_ID}/${capID}/${imgPath}`
+  getImageUrl(capID: string, imgPath: string) {
+    return `${environment.FILE_URL}${environment.CAP_COLLECTION_ID}/${capID}/${imgPath}`;
   }
 }

@@ -19,6 +19,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { PlaceOrderDialogComponent } from './place-order-dialog.component';
 interface ICapModel extends ICap {
   quantity: number;
   isSelectedItem: boolean;
@@ -26,11 +27,15 @@ interface ICapModel extends ICap {
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, PlaceOrderDialogComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.scss',
 })
 export class HomePageComponent implements OnInit, AfterContentInit {
+  isDialogVisible = false;
+  dialogHeader = '';
+  dialogMessage = '';
+  dialogType: 'success' | 'error' = 'success';
   public caps: Array<ICapModel> = [];
   public fileUrl: string = environment.FILE_URL;
   public regularPrice = 300;
@@ -173,7 +178,13 @@ export class HomePageComponent implements OnInit, AfterContentInit {
     this.fbPixel.track('track', $event);
     this.trackButtonClick();
     if (!this.name || !this.mobile || !this.address) {
-      alert('Please fill in all customer details.');
+      // alert('Please fill in all customer details.');
+      // সতর্কবাণী
+      // অনুগ্রহ করে আপনার নাম, যোগাযোগ নম্বর এবং শিপিং ঠিকানা পূরণ করুন।
+      this.dialogHeader = 'Warning';
+      this.dialogMessage = `Please fill your name, contact number and shipping address.`;
+      this.dialogType = 'error';
+      this.isDialogVisible = true;
       return;
     }
     let consumer: IAccount = {
@@ -205,14 +216,19 @@ export class HomePageComponent implements OnInit, AfterContentInit {
     // console.log(this.order, cartItems, consumer);
 
     if (selectedCaps === 0) {
-      alert('Please select at least one cap to place an order.');
+      // alert('Please select at least one cap to place an order.');
+      this.dialogHeader = 'Warning';
+      this.dialogMessage = `Please select at least one cap to place an order.`;
+      this.dialogType = 'error';
+      this.isDialogVisible = true;
       return;
     }
 
-    alert(
-      `Thank you ${name}!\n\n${orderDetails}\n${this.summary}\nOrder placed successfully!`
-    );
-    this.orderService.placedOrder(consumer, cartItems, this.order);
+    this.dialogHeader = 'Order Placed';
+    this.dialogMessage = `Thank you, ${name}!\n\n${orderDetails}\n${this.summary}\nOrder placed successfully!`;
+    this.dialogType = 'success';
+    this.isDialogVisible = true;
+    await this.orderService.placeOrder(consumer, cartItems, this.order);
   }
   title = 'toaseen-cms';
 }
