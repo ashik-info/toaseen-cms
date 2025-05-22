@@ -1,11 +1,6 @@
-import {
-  AfterContentInit,
-  Component,
-  Inject,
-  OnInit,
-  PLATFORM_ID,
-  Renderer2,
-} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { PLATFORM_ID, Inject } from '@angular/core';
+import { AfterContentInit, Component, OnInit, Renderer2 } from '@angular/core';
 import { CapService, ICap } from '../services/cap.service';
 import { environment } from 'src/environments/environment';
 import {
@@ -15,11 +10,16 @@ import {
 } from '../services/order.service';
 import { IAccount } from '../services/account.service';
 import { FacebookPixelService } from '../services/facebook-pixel.service';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { PlaceOrderDialogComponent } from './place-order-dialog.component';
+import {
+  isBrowser,
+  isServer,
+  TrackingService,
+} from '../services/tracking.service';
 interface ICapModel extends ICap {
   quantity: number;
   isSelectedItem: boolean;
@@ -49,8 +49,10 @@ export class HomePageComponent implements OnInit, AfterContentInit {
   capsData: Array<any> = [];
   galleryImages: Array<string> = [];
   constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
     private readonly capService: CapService,
     private readonly orderService: OrderService,
+    private readonly tracking: TrackingService,
     private fbPixel: FacebookPixelService,
     private router: Router // private renderer: Renderer2, // @Inject(PLATFORM_ID) private platformId: object
   ) {}
@@ -58,28 +60,33 @@ export class HomePageComponent implements OnInit, AfterContentInit {
     // this.fbPixel.init();
   }
   ngOnInit(): void {
-    this.fbPixel.init(this.fbPixel.pixelId);
-    this.fbPixel.injectNoScript(this.fbPixel.pixelId);
+    if (isBrowser(this.platformId)) {
+      this.tracking.pushEvent('pageView', {
+        pagePath: window.location.pathname,
+        pageTitle: document.title,
+      });
 
-    this.router.events
-      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
-      .subscribe(() => this.fbPixel.track('PageView'));
+      this.router.events
+        .pipe(
+          filter(
+            (event): event is NavigationEnd => event instanceof NavigationEnd
+          )
+        )
+        .subscribe((event) => {
+          this.tracking.pushEvent('pageView', {
+            pagePath: event.urlAfterRedirects,
+            pageTitle: document.title,
+          });
+        });
+    }
 
-    // if (isPlatformBrowser(this.platformId)) {
-    //   // this.pixel.init('252558660');
+    if (isServer(this.platformId)) {
+      // Example of deferred server-only logic like animation preload or SEO hints
+      console.log(
+        'Running on server, defer animations or load static previews'
+      );
+    }
 
-    //   const noscript = this.renderer.createElement('noscript');
-    //   noscript.innerHTML = `
-    //     <img height="1" width="1" style="display:none"
-    //       src="https://www.facebook.com/tr?id=${this.fbPixel.pixelId}&ev=PageView&noscript=1" />
-    //   `;
-    //   this.renderer.appendChild(document.body, noscript);
-    // }
-    // const noscript = this.renderer.createElement('noscript');
-    // noscript.innerHTML = `
-    //   <img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${this.fbPixel.pixelId}&ev=PageView&noscript=1" />
-    // `;
-    // this.renderer.appendChild(document.body, noscript);
     this.capService.getCaps().then(
       (res) =>
         (this.caps = res.items.map((item) => {
@@ -103,6 +110,17 @@ export class HomePageComponent implements OnInit, AfterContentInit {
           )[0])
       );
   }
+  onCTAClick<T>(data: T) {
+    this.tracking.pushEvent('ctaClick', { data });
+  }
+
+  onFormSubmit() {
+    this.tracking.pushEvent('formSubmit', { formName: 'Contact Us' });
+  }
+
+  onUserLogin() {
+    this.tracking.pushEvent('userLogin', { userType: 'Standard User' });
+  }
   trackButtonClick() {
     // this.fbPixel.trackEvent('ButtonClick', { buttonId: 'cta-button' });
   }
@@ -110,10 +128,13 @@ export class HomePageComponent implements OnInit, AfterContentInit {
     const qty = this.caps[index].quantity + change;
     this.caps[index].quantity = qty && qty > 0 ? qty : 0;
     this.caps[index].isSelectedItem = Boolean(qty && qty > 0);
+    this.onCTAClick({
+      id: this.caps[index].id,
+      title: this.caps[index].title,
+      quantity: this.caps[index].quantity,
+      discountPrice: this.caps[index].discount_price,
+    });
     this.calculateOrder();
-    // console.log(
-    //   this.caps.map((i) => ({ qty: i.quantity, select: i.isSelectedItem }))
-    // );
   }
 
   get totalPrice(): number {
@@ -229,6 +250,10 @@ export class HomePageComponent implements OnInit, AfterContentInit {
     this.dialogType = 'success';
     this.isDialogVisible = true;
     await this.orderService.placeOrder(consumer, cartItems, this.order);
+    this.onCTAClick({
+      label: 'Placed Order',
+      data: consumer,
+    });
   }
   title = 'toaseen-cms';
 }
